@@ -1,0 +1,770 @@
+﻿
+<!DOCTYPE html>
+
+
+<!--This is a repost from http://jsfiddle.net/8ypxW/3/  - All credit goes to the author of that jsFiddle
+I reposted because the jsFiddle page does not work, saveAs does not work-->
+
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>div to image and saveAs demo</title>
+    <script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
+    <script type='text/javascript' src="https://github.com/niklasvh/html2canvas/releases/download/0.4.1/html2canvas.js"></script>
+    <script type='text/javascript' src="https://raw.githubusercontent.com/eligrey/FileSaver.js/master/FileSaver.js"></script>
+
+
+    <style type='text/css'>
+        body {
+            font-family: "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+        }
+
+        .dataset {
+            float: left;
+            vertical-align: top;
+        }
+
+        .widget {
+            display: inline-block;
+            background-color: white;
+            font-size: 14px !important;
+            line-height: 20px !important;
+            margin: 5px;
+            vertical-align: top;
+            color: #333;
+            border-radius: 5px;
+            margin: 10px;
+            padding-bottom: 20px;
+            border: 1px solid lightgray;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            display: inline-block;
+            page-break-after: always;
+        }
+
+            .widget .header p {
+                padding: 10px;
+                border-bottom: 1px solid lightgrey;
+                max-width: 360px;
+            }
+
+            .widget .header .title {
+                font-weight: bold;
+                vertical-align: middle;
+                min-height: 36px;
+                padding: 5px 10px 5px 10px;
+            }
+
+            .widget .header:hover {
+                background-color: #f4f4f4;
+            }
+
+            .widget .header .title.selected {
+                border-color: cornflowerblue;
+                background-color: #EEF;
+            }
+
+            .widget .content {
+                padding: 5px;
+                overflow-y: auto;
+                max-height: 400px;
+            }
+
+        .autolayout {
+            display: inline-block;
+        }
+
+        .element {
+            width: 360px;
+        }
+
+        .compact .content {
+            display: table;
+            width: 100%;
+        }
+
+        .compact .row {
+            display: table-row;
+            width: 100%;
+        }
+
+        .compact .cell {
+            display: table-cell;
+        }
+
+        .compact .row.selected {
+            background-color: #eee;
+        }
+
+
+
+        .toolbar {
+            display: block;
+            vertical-align: top;
+            margin: 10px;
+        }
+
+            .toolbar .basis {
+                min-width: 100px;
+            }
+
+        .btn {
+            /*min-width: 60px;*/
+        }
+
+
+        .cell.value {
+            overflow: hidden;
+            text-wrap: none;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .cell.freq {
+            width: 60px;
+        }
+
+        .cell.glyph {
+            vertical-align: middle;
+            width: 100px;
+        }
+
+
+        .element {
+        }
+
+            .element table {
+                table-layout: fixed;
+                width: 100%;
+            }
+
+            .element td {
+                padding: 0px;
+            }
+
+            .element .selectable:hover {
+                background-color: #f4f4f4;
+            }
+
+
+            .element .stat {
+                text-align: right;
+                padding-right: 20px;
+                font-weigth: bold;
+                color: darkgray;
+            }
+
+
+
+            .element .bar {
+                height: 18px;
+                display: inline-block;
+                float: left;
+            }
+
+        .bar-both {
+            background-color: #0a67a3 !important;
+        }
+
+        .bar-fg {
+            background-color: #3e97d1 !important;
+        }
+
+        .bar-bg {
+            background-color: #ddd !important;
+        }
+
+        .selected .bar-fg {
+            background-color: #FC0;
+        }
+
+        .selected .bar-both {
+            background-color: #FA0;
+        }
+
+        tr.selected {
+            background-color: #eee;
+        }
+
+        .crosstab .selectable:hover {
+            background-color: #f4f4f4;
+        }
+
+        .crosstab tr.selected {
+            background-color: #eee;
+        }
+
+        .crosstab .header p {
+            max-width: 600px;
+        }
+
+
+        .crosstab td {
+            padding: 0 5px 0 5px;
+            text-align: right;
+        }
+
+            .crosstab td.value {
+                min-width: 60px;
+                max-width: 240px;
+                text-align: left;
+            }
+
+        .crosstab .cell {
+            vertical-align: top;
+        }
+
+
+
+        .crosstab th.cell {
+            max-width: 120px;
+            overflow: hidden;
+            white-space: normal;
+            text-overflow: ellipsis;
+            text-align: right;
+            padding-right: 10px;
+            vertical-align: bottom;
+        }
+
+        .crosstab .n {
+            color: darkgray;
+        }
+
+        .fieldlist {
+        }
+
+        .constraints {
+            min-width: 300px;
+            padding: 10px;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+        }
+
+            .constraints table {
+                width: 100%;
+            }
+
+        .sidenote {
+            max-width: 300px;
+            padding: 0 10px 0px 10px;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .headnote {
+            max-width: 600px;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+        }
+
+        .info-block {
+            /*border: 1px solid lightgrey;*/
+            background-color: #eee;
+            vertical-align: top;
+            margin: 10px;
+            padding: 10px;
+            display: block;
+            /*box-shadow: 0 0 0 0px #9bc0cf, 0 0 0 3px #e0ebf0;*/
+        }
+
+        .menu-item {
+        }
+
+        .menu-item-value {
+            text-align: right;
+            float: right;
+        }
+
+        .gradient-blue {
+            background: #b8e1fc; /* Old browsers */
+            /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+            background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2I4ZTFmYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwJSIgc3RvcC1jb2xvcj0iI2E5ZDJmMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjI1JSIgc3RvcC1jb2xvcj0iIzkwYmFlNCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjM3JSIgc3RvcC1jb2xvcj0iIzkwYmNlYSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzkwYmZmMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iIzZiYThlNSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjgzJSIgc3RvcC1jb2xvcj0iI2EyZGFmNSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiZGYzZmQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+            background: -moz-linear-gradient(top, #b8e1fc 0%, #a9d2f3 10%, #90bae4 25%, #90bcea 37%, #90bff0 50%, #6ba8e5 51%, #a2daf5 83%, #bdf3fd 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #b8e1fc), color-stop(10%, #a9d2f3), color-stop(25%, #90bae4), color-stop(37%, #90bcea), color-stop(50%, #90bff0), color-stop(51%, #6ba8e5), color-stop(83%, #a2daf5), color-stop(100%, #bdf3fd)); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top, #b8e1fc 0%, #a9d2f3 10%, #90bae4 25%, #90bcea 37%, #90bff0 50%, #6ba8e5 51%, #a2daf5 83%, #bdf3fd 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top, #b8e1fc 0%, #a9d2f3 10%, #90bae4 25%, #90bcea 37%, #90bff0 50%, #6ba8e5 51%, #a2daf5 83%, #bdf3fd 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top, #b8e1fc 0%, #a9d2f3 10%, #90bae4 25%, #90bcea 37%, #90bff0 50%, #6ba8e5 51%, #a2daf5 83%, #bdf3fd 100%); /* IE10+ */
+            background: linear-gradient(to bottom, #b8e1fc 0%, #a9d2f3 10%, #90bae4 25%, #90bcea 37%, #90bff0 50%, #6ba8e5 51%, #a2daf5 83%, #bdf3fd 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#b8e1fc', endColorstr='#bdf3fd', GradientType=0); /* IE6-8 */
+        }
+    </style>
+
+
+
+    <script type='text/javascript'>
+        
+
+        /*
+ * JavaScript Canvas to Blob 2.0.5
+ * https://github.com/blueimp/JavaScript-Canvas-to-Blob
+ *
+ * Copyright 2012, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ *
+ * Based on stackoverflow user Stoive's code snippet:
+ * http://stackoverflow.com/q/4998908
+ */
+
+        /*jslint nomen: true, regexp: true */
+        /*global window, atob, Blob, ArrayBuffer, Uint8Array, define */
+
+        (function (window) {
+            'use strict';
+            var CanvasPrototype = window.HTMLCanvasElement &&
+                    window.HTMLCanvasElement.prototype,
+                hasBlobConstructor = window.Blob && (function () {
+                    try {
+                        return Boolean(new Blob());
+                    } catch (e) {
+                        return false;
+                    }
+                }()),
+                hasArrayBufferViewSupport = hasBlobConstructor && window.Uint8Array &&
+                    (function () {
+                        try {
+                            return new Blob([new Uint8Array(100)]).size === 100;
+                        } catch (e) {
+                            return false;
+                        }
+                    }()),
+                BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder ||
+                    window.MozBlobBuilder || window.MSBlobBuilder,
+                dataURLtoBlob = (hasBlobConstructor || BlobBuilder) && window.atob &&
+                    window.ArrayBuffer && window.Uint8Array && function (dataURI) {
+                        var byteString,
+                            arrayBuffer,
+                            intArray,
+                            i,
+                            mimeString,
+                            bb;
+                        if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+                            // Convert base64 to raw binary data held in a string:
+                            byteString = atob(dataURI.split(',')[1]);
+                        } else {
+                            // Convert base64/URLEncoded data component to raw binary data:
+                            byteString = decodeURIComponent(dataURI.split(',')[1]);
+                        }
+                        // Write the bytes of the string to an ArrayBuffer:
+                        arrayBuffer = new ArrayBuffer(byteString.length);
+                        intArray = new Uint8Array(arrayBuffer);
+                        for (i = 0; i < byteString.length; i += 1) {
+                            intArray[i] = byteString.charCodeAt(i);
+                        }
+                        // Separate out the mime component:
+                        mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+                        // Write the ArrayBuffer (or ArrayBufferView) to a blob:
+                        if (hasBlobConstructor) {
+                            return new Blob(
+                                [hasArrayBufferViewSupport ? intArray : arrayBuffer],
+                                { type: mimeString }
+                            );
+                        }
+                        bb = new BlobBuilder();
+                        bb.append(arrayBuffer);
+                        return bb.getBlob(mimeString);
+                    };
+            if (window.HTMLCanvasElement && !CanvasPrototype.toBlob) {
+                if (CanvasPrototype.mozGetAsFile) {
+                    CanvasPrototype.toBlob = function (callback, type, quality) {
+                        if (quality && CanvasPrototype.toDataURL && dataURLtoBlob) {
+                            callback(dataURLtoBlob(this.toDataURL(type, quality)));
+                        } else {
+                            callback(this.mozGetAsFile('blob', type));
+                        }
+                    };
+                } else if (CanvasPrototype.toDataURL && dataURLtoBlob) {
+                    CanvasPrototype.toBlob = function (callback, type, quality) {
+                        callback(dataURLtoBlob(this.toDataURL(type, quality)));
+                    };
+                }
+            }
+            if (typeof define === 'function' && define.amd) {
+                define(function () {
+                    return dataURLtoBlob;
+                });
+            } else {
+                window.dataURLtoBlob = dataURLtoBlob;
+            }
+        }(this));
+
+        /////////////////////////////////////////
+
+        /* FileSaver.js
+ * A saveAs() FileSaver implementation.
+ * 2015-05-07.2
+ *
+ * By Eli Grey, http://eligrey.com
+ * License: X11/MIT
+ *   See https://github.com/eligrey/FileSaver.js/blob/master/LICENSE.md
+ */
+
+        /*global self */
+        /*jslint bitwise: true, indent: 4, laxbreak: true, laxcomma: true, smarttabs: true, plusplus: true */
+
+        /*! @source http://purl.eligrey.com/github/FileSaver.js/blob/master/FileSaver.js */
+
+        var saveAs = saveAs || (function (view) {
+            "use strict";
+            // IE <10 is explicitly unsupported
+            if (typeof navigator !== "undefined" && /MSIE [1-9]\./.test(navigator.userAgent)) {
+                return;
+            }
+            var
+                  doc = view.document
+                  // only get URL when necessary in case Blob.js hasn't overridden it yet
+                , get_URL = function () {
+                    return view.URL || view.webkitURL || view;
+                }
+                , save_link = doc.createElementNS("http://www.w3.org/1999/xhtml", "a")
+                , can_use_save_link = "download" in save_link
+                , click = function (node) {
+                    var event = doc.createEvent("MouseEvents");
+                    event.initMouseEvent(
+                        "click", true, false, view, 0, 0, 0, 0, 0
+                        , false, false, false, false, 0, null
+                    );
+                    node.dispatchEvent(event);
+                }
+                , webkit_req_fs = view.webkitRequestFileSystem
+                , req_fs = view.requestFileSystem || webkit_req_fs || view.mozRequestFileSystem
+                , throw_outside = function (ex) {
+                    (view.setImmediate || view.setTimeout)(function () {
+                        throw ex;
+                    }, 0);
+                }
+                , force_saveable_type = "application/octet-stream"
+                , fs_min_size = 0
+                // See https://code.google.com/p/chromium/issues/detail?id=375297#c7 and
+                // https://github.com/eligrey/FileSaver.js/commit/485930a#commitcomment-8768047
+                // for the reasoning behind the timeout and revocation flow
+                , arbitrary_revoke_timeout = 500 // in ms
+                , revoke = function (file) {
+                    var revoker = function () {
+                        if (typeof file === "string") { // file is an object URL
+                            get_URL().revokeObjectURL(file);
+                        } else { // file is a File
+                            file.remove();
+                        }
+                    };
+                    if (view.chrome) {
+                        revoker();
+                    } else {
+                        setTimeout(revoker, arbitrary_revoke_timeout);
+                    }
+                }
+                , dispatch = function (filesaver, event_types, event) {
+                    event_types = [].concat(event_types);
+                    var i = event_types.length;
+                    while (i--) {
+                        var listener = filesaver["on" + event_types[i]];
+                        if (typeof listener === "function") {
+                            try {
+                                listener.call(filesaver, event || filesaver);
+                            } catch (ex) {
+                                throw_outside(ex);
+                            }
+                        }
+                    }
+                }
+                , auto_bom = function (blob) {
+                    // prepend BOM for UTF-8 XML and text/* types (including HTML)
+                    if (/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+                        return new Blob(["\ufeff", blob], { type: blob.type });
+                    }
+                    return blob;
+                }
+                , FileSaver = function (blob, name) {
+                    blob = auto_bom(blob);
+                    // First try a.download, then web filesystem, then object URLs
+                    var
+                          filesaver = this
+                        , type = blob.type
+                        , blob_changed = false
+                        , object_url
+                        , target_view
+                        , dispatch_all = function () {
+                            dispatch(filesaver, "writestart progress write writeend".split(" "));
+                        }
+                        // on any filesys errors revert to saving with object URLs
+                        , fs_error = function () {
+                            // don't create more object URLs than needed
+                            if (blob_changed || !object_url) {
+                                object_url = get_URL().createObjectURL(blob);
+                            }
+                            if (target_view) {
+                                target_view.location.href = object_url;
+                            } else {
+                                var new_tab = view.open(object_url, "_blank");
+                                if (new_tab == undefined && typeof safari !== "undefined") {
+                                    //Apple do not allow window.open, see http://bit.ly/1kZffRI
+                                    view.location.href = object_url
+                                }
+                            }
+                            filesaver.readyState = filesaver.DONE;
+                            dispatch_all();
+                            revoke(object_url);
+                        }
+                        , abortable = function (func) {
+                            return function () {
+                                if (filesaver.readyState !== filesaver.DONE) {
+                                    return func.apply(this, arguments);
+                                }
+                            };
+                        }
+                        , create_if_not_found = { create: true, exclusive: false }
+                        , slice
+                    ;
+                    filesaver.readyState = filesaver.INIT;
+                    if (!name) {
+                        name = "download";
+                    }
+                    if (can_use_save_link) {
+                        object_url = get_URL().createObjectURL(blob);
+                        save_link.href = object_url;
+                        save_link.download = name;
+                        click(save_link);
+                        filesaver.readyState = filesaver.DONE;
+                        dispatch_all();
+                        revoke(object_url);
+                        return;
+                    }
+                    // Object and web filesystem URLs have a problem saving in Google Chrome when
+                    // viewed in a tab, so I force save with application/octet-stream
+                    // http://code.google.com/p/chromium/issues/detail?id=91158
+                    // Update: Google errantly closed 91158, I submitted it again:
+                    // https://code.google.com/p/chromium/issues/detail?id=389642
+                    if (view.chrome && type && type !== force_saveable_type) {
+                        slice = blob.slice || blob.webkitSlice;
+                        blob = slice.call(blob, 0, blob.size, force_saveable_type);
+                        blob_changed = true;
+                    }
+                    // Since I can't be sure that the guessed media type will trigger a download
+                    // in WebKit, I append .download to the filename.
+                    // https://bugs.webkit.org/show_bug.cgi?id=65440
+                    if (webkit_req_fs && name !== "download") {
+                        name += ".download";
+                    }
+                    if (type === force_saveable_type || webkit_req_fs) {
+                        target_view = view;
+                    }
+                    if (!req_fs) {
+                        fs_error();
+                        return;
+                    }
+                    fs_min_size += blob.size;
+                    req_fs(view.TEMPORARY, fs_min_size, abortable(function (fs) {
+                        fs.root.getDirectory("saved", create_if_not_found, abortable(function (dir) {
+                            var save = function () {
+                                dir.getFile(name, create_if_not_found, abortable(function (file) {
+                                    file.createWriter(abortable(function (writer) {
+                                        writer.onwriteend = function (event) {
+                                            target_view.location.href = file.toURL();
+                                            filesaver.readyState = filesaver.DONE;
+                                            dispatch(filesaver, "writeend", event);
+                                            revoke(file);
+                                        };
+                                        writer.onerror = function () {
+                                            var error = writer.error;
+                                            if (error.code !== error.ABORT_ERR) {
+                                                fs_error();
+                                            }
+                                        };
+                                        "writestart progress write abort".split(" ").forEach(function (event) {
+                                            writer["on" + event] = filesaver["on" + event];
+                                        });
+                                        writer.write(blob);
+                                        filesaver.abort = function () {
+                                            writer.abort();
+                                            filesaver.readyState = filesaver.DONE;
+                                        };
+                                        filesaver.readyState = filesaver.WRITING;
+                                    }), fs_error);
+                                }), fs_error);
+                            };
+                            dir.getFile(name, { create: false }, abortable(function (file) {
+                                // delete file if it already exists
+                                file.remove();
+                                save();
+                            }), abortable(function (ex) {
+                                if (ex.code === ex.NOT_FOUND_ERR) {
+                                    save();
+                                } else {
+                                    fs_error();
+                                }
+                            }));
+                        }), fs_error);
+                    }), fs_error);
+                }
+                , FS_proto = FileSaver.prototype
+                , saveAs = function (blob, name) {
+                    return new FileSaver(blob, name);
+                }
+            ;
+            // IE 10+ (native saveAs)
+            if (typeof navigator !== "undefined" && navigator.msSaveOrOpenBlob) {
+                return function (blob, name) {
+                    return navigator.msSaveOrOpenBlob(auto_bom(blob), name);
+                };
+            }
+
+            FS_proto.abort = function () {
+                var filesaver = this;
+                filesaver.readyState = filesaver.DONE;
+                dispatch(filesaver, "abort");
+            };
+            FS_proto.readyState = FS_proto.INIT = 0;
+            FS_proto.WRITING = 1;
+            FS_proto.DONE = 2;
+
+            FS_proto.error =
+            FS_proto.onwritestart =
+            FS_proto.onprogress =
+            FS_proto.onwrite =
+            FS_proto.onabort =
+            FS_proto.onerror =
+            FS_proto.onwriteend =
+                null;
+
+            return saveAs;
+        }(
+               typeof self !== "undefined" && self
+            || typeof window !== "undefined" && window
+            || this.content
+        ));
+        // `self` is undefined in Firefox for Android content script context
+        // while `this` is nsIContentFrameMessageManager
+        // with an attribute `content` that corresponds to the window
+
+        if (typeof module !== "undefined" && module.exports) {
+            module.exports.saveAs = saveAs;
+        } else if ((typeof define !== "undefined" && define !== null) && (define.amd != null)) {
+            define([], function () {
+                return saveAs;
+            });
+        }
+
+
+        /////////////////////////////////////
+
+
+
+//<![CDATA[
+        $(window).load(function () {
+            $(function () {
+                $("#btnSave").click(function () {
+                    html2canvas($("#widget"), {
+                        onrendered: function (canvas) {
+                            theCanvas = canvas;
+                            document.body.appendChild(canvas);
+
+                            canvas.toBlob(function (blob) {
+                                saveAs(blob, "Dashboard.png");
+                            });
+                        }
+                    });
+                });
+            });
+
+        });//]]>
+
+    </script>
+
+
+</head>
+<body>
+    <span id="widget" class="widget" field="AGE" roundby="20" description="Patient age, in years">
+        <div class="header ng-scope">
+            <div class="title ng-binding">2014 Sales Data</div>
+            <p class="ng-binding">Market Demographics</p>
+        </div>
+        <div class="element ng-scope">
+            <div ng-show="hasData()" class="content">
+                <table ng-model="table" class="ng-pristine ng-valid">
+                    <colgroup>
+                        <col />
+                        <col width="60x" />
+                        <col width="100px" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="cell value">Age</th>
+                            <th class="cell freq">Marketshare</th>
+                            <th class="cell value"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="rowKey in table.rowKeys | orderBy:elementRowSort " ng-click="onSelect(rowKey, $event.shiftKey)" ng-class="{true:'selected'}[isSelected(rowKey)]" data-key="0" class="selectable ng-scope">
+                            <td class="cell value">
+                                <span tooltip="0 to 19" class="ng-scope ng-binding">0 to 19</span>
+                            </td>
+
+                            <td class="cell freq ng-binding">17.2%</td>
+                            <td class="cell glyph">
+                                <span class="bar bar-both" ng-style="{width: (table.getBothPct(rowKey) | barSize)+'%' }" style="width: 17.234468937875754%;"></span>
+                                <span class="bar bar-fg" ng-style="{width: (table.getFgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                                <span class="bar bar-bg" ng-style="{width: (table.getBgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                            </td>
+                        </tr>
+                        <tr ng-repeat="rowKey in table.rowKeys | orderBy:elementRowSort " ng-click="onSelect(rowKey, $event.shiftKey)" ng-class="{true:'selected'}[isSelected(rowKey)]" data-key="20" class="selectable ng-scope">
+                            <td class="cell value">
+                                <span tooltip="20 to 39" class="ng-scope ng-binding">20 to 39</span>
+                            </td>
+                            <td class="cell freq ng-binding">18.0%</td>
+                            <td class="cell glyph">
+                                <span class="bar bar-both" ng-style="{width: (table.getBothPct(rowKey) | barSize)+'%' }" style="width: 18.03607214428858%;"></span>
+                                <span class="bar bar-fg" ng-style="{width: (table.getFgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                                <span class="bar bar-bg" ng-style="{width: (table.getBgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                            </td>
+                        </tr>
+
+                        <tr ng-repeat="rowKey in table.rowKeys | orderBy:elementRowSort " ng-click="onSelect(rowKey, $event.shiftKey)" ng-class="{true:'selected'}[isSelected(rowKey)]" data-key="40" class="selectable ng-scope">
+                            <td class="cell value">
+                                <span tooltip="40 to 59" class="ng-scope ng-binding">40 to 59</span>
+                            </td>
+
+
+                            <td class="cell freq ng-binding">34.3%</td>
+                            <td class="cell glyph">
+
+                                <span class="bar bar-both" ng-style="{width: (table.getBothPct(rowKey) | barSize)+'%' }" style="width: 34.2685370741483%;"></span>
+                                <span class="bar bar-fg" ng-style="{width: (table.getFgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                                <span class="bar bar-bg" ng-style="{width: (table.getBgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                            </td>
+                        </tr>
+                        <tr ng-repeat="rowKey in table.rowKeys | orderBy:elementRowSort " ng-click="onSelect(rowKey, $event.shiftKey)" ng-class="{true:'selected'}[isSelected(rowKey)]" data-key="60" class="selectable ng-scope">
+                            <td class="cell value">
+                                <span tooltip="60 to 79" class="ng-scope ng-binding">60 to 79</span>
+                            </td>
+
+                            <td class="cell freq ng-binding">24.0%</td>
+                            <td class="cell glyph">
+                                
+                                <span class="bar bar-both" ng-style="{width: (table.getBothPct(rowKey) | barSize)+'%' }" style="width: 24.04809619238477%;"></span>
+                                <span class="bar bar-fg" ng-style="{width: (table.getFgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                                <span class="bar bar-bg" ng-style="{width: (table.getBgPct(rowKey) | barSize) +'%' }" style="width: 0%;"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                </table>
+            </div>
+
+
+        </div>
+
+    </span>
+    <br />
+    <input type="button" id="btnSave" value="Save PNG" />
+
+    <div id="img-out"></div>
+
+</body>
+
+
+</html>

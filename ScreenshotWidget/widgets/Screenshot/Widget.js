@@ -23,7 +23,7 @@ function (declare, BaseWidget, ToggleButton, dom, registry, Button, on, aspect, 
 
 
 {
-        templateString: '<div> <br /> <br />1. Click the Screenshot button to save a screenshot. <br /> ' +
+        templateString: '<div> <br /> <br />Click the Screenshot button to save a screenshot. <br /><br />  ' +
       '<input type="button" class="jimu-btn" id="btnScreenshot" value="Save Screenshot" data-dojo-attach-event="click:_screenshotClick"> <br /> <br /> <br /></div> ',
      
  baseClass: 'jimu-widget-screenshot',

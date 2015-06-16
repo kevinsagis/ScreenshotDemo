@@ -43,7 +43,7 @@ function (declare, BaseWidget, ToggleButton, dom, registry, Button, on, aspect, 
         // "timeout": "0",
 
          onrendered: function (canvas) {
-            // document.body.appendChild(canvas);
+             document.body.appendChild(canvas);
              canvas.toBlob(function (blob) {
                  saveAs(blob, "Screenshot.png");
              });

@@ -34,30 +34,40 @@ function (declare, BaseWidget, ToggleButton, dom, registry, Button, on, aspect, 
 
      var canvas;
 
-     html2canvas(document.body, {
+     //html2canvas(document.body, {
+     
+     //    "logging": true, //Enable log (use Web Console for get Errors and Warnings)
+     //  //  "useCORS": true,
+     //    //"allowTaint": true,
+     //    "proxy": "/workPython/widgets/Screenshot/html2canvasproxy.py",
+     //   // "timeout": "0",
 
-         "logging": true, //Enable log (use Web Console for get Errors and Warnings)
-       //  "useCORS": true,
-         //"allowTaint": true,
-         "proxy": "/boa4/widgets/Screenshot/html2canvasproxy.php",
-        // "timeout": "0",
-
-         onrendered: function (canvas) {
-            // document.body.appendChild(canvas);
-             canvas.toBlob(function (blob) {
-                 saveAs(blob, "Screenshot.png");
-             });
-         }
-     });
- 
-     //html2canvas(document.body).then(function (canvas) {
-     /////this is the sytnax for the new alpha 0.5  ..... /////
-     //    document.body.appendChild(canvas);
-     //    canvas.toBlob(function (blob) {
-     //        saveAs(blob, "Screenshot.png");
-     //    });
-
+     //    onrendered: function (canvas) {
+     //        document.body.appendChild(canvas);
+     //        canvas.toBlob(function (blob) {
+     //            saveAs(blob, "Screenshot.png");
+     //        });
+     //    }
      //});
+ ////////////////////////
+     var mainPage = dom.byId("main-page");
+
+
+     html2canvas(mainPage,
+         {
+//             useCORS: true,
+             "logging": true,
+                 "proxy": "/work/widgets/Screenshot/html2canvasproxy.php"
+
+         }
+     ).then(function (canvas) {
+     ///this is the sytnax for the new alpha 0.5  ..... /////
+         document.body.appendChild(canvas);
+         canvas.toBlob(function (blob) {
+             saveAs(blob, "Screenshot.png");
+         });
+
+     });
 
 
 /////

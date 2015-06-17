@@ -1,8 +1,8 @@
 {
     "name": "Screenshot",
   "platform": "HTML",
-  "version": "1.2",
-  "wabVersion": "1.2",
+  "version": "1.0",
+  "wabVersion": "1.1",
   "author": "Kevin MacLeod",
   "description": "This widget saves a screenshot of the viewer window.",
   "copyright": "",

@@ -4,6 +4,7 @@ The widget is located inside the Widgets folder:
 ScreenshotWidget/widgets/Screenshot  
 
 To use:
+
 1) put the Screenshot widget folder into your own WAB site's Widgets folder
 2) change    the line in Widget.js ---
       "proxy": "/INSERT_YOUR_SITE_NAME/widgets/Screenshot/html2canvasproxy.php",
@@ -20,6 +21,7 @@ config window, so when you go to add this widget, all you have to do is enter yo
 
 
 Credits: 
+
 html2canvas by Niklas von Hertzen at github.com/niklasvh/html2canvas
 html2canvasProxy by Guilherme Nascimento at github.com/brcontainer/html2canvas-python-proxy 
 filesaver.js by Eli Grey at github.com/eligrey/FileSaver.js/

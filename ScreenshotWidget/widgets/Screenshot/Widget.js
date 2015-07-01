@@ -39,7 +39,7 @@ function (declare, BaseWidget, ToggleButton, dom, registry, Button, on, aspect, 
          "logging": true, //Enable log (use Web Console for get Errors and Warnings)
        //  "useCORS": true,
          //"allowTaint": true,
-         "proxy": "/boa4/widgets/Screenshot/html2canvasproxy.php",
+         "proxy": "/ScreenshotWidget/widgets/Screenshot/html2canvasproxy.php",
         // "timeout": "0",
 
          onrendered: function (canvas) {

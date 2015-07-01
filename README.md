@@ -8,6 +8,7 @@ To use:
 
 1) put the Screenshot widget folder into your own WAB site's Widgets folder
 
+
 2) change    the line in Widget.js ---
       "proxy": "/INSERT_YOUR_SITE_NAME/widgets/Screenshot/html2canvasproxy.php",
 to whatever the name of your WAB site is.  For example, in this downloadable demo the name of the site is 
